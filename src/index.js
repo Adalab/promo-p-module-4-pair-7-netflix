@@ -53,12 +53,12 @@ server.get('/movies', (req, res) => {
   const filteredMovies = movies
     .filter(movie => {
       if(genderFilterParam === ''){
-        return true;
+        return true; // Le decimos que si está seleccionado el valor por defecto en el select (es decir, el valor que pone en el navegador 'Todas'), nos devuelva todas las películas
       } else {
-        return movie.gender === genderFilterParam ? true : false;
+        return movie.gender === genderFilterParam ? true : false; // Le decimos que si el género de cada película (movie.gender) es igual al parámetro que recibimos por query params 'genderFilterParam', entonces me devuelva esa película, la que cumple esa condición vamos
       }
     })
-    .sort(sortFilterParam === 'asc' ? orderScenesAsc : orderScenesDesc);
+    .sort(sortFilterParam === 'asc' ? orderScenesAsc : orderScenesDesc); // En este caso, la función 'sort' dice que si el checkbox tiene valor 'asc', las películas se ordenen alfabéticamente (como describe la función 'orderScenesAsc') y sino, que las ordene alfabéticamente inverso (como describe la función 'orderScenesDesc')
 
 
   // Esta es la variable que contiene la respuesta del servidor a la petición del front. En este caso, guardamos las variables que queremos que nos devuelva el servidor en la variable 'response'
