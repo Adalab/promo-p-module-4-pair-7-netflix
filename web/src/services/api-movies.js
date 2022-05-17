@@ -1,11 +1,15 @@
-// login
+const getMoviesFromApi = (params) => {
+  console.log('Se están pidiendo las películas de la app');
+  console.log(params);
 
-const getMoviesFromApi = () => {
-  console.log("Se están pidiendo las películas de la app");
-  // CAMBIA ESTE FETCH PARA QUE APUNTE A UN ENDPOINT DE TU SERVIDOR, PIENSA SI DEBE SER GET O POST, PIENSA QUÉ DATOS DEBES ENVIAR, ETC
-  return fetch("//localhost:4000/movies")
-    .then((response) => response.json())
-    .then((data) => {
+  // create query params
+  const queryParamsGender = `gender=${params.gender}`;
+  const queryParamsSort = `sort=${params.sort}`;
+
+
+  return fetch(`//localhost:4000/movies?${queryParamsGender}&${queryParamsSort}`)
+    .then(response => response.json())
+    .then(data => {
       return data;
     });
 };
