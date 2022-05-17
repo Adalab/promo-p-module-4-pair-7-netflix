@@ -8,6 +8,9 @@ const server = express();
 server.use(cors());
 server.use(express.json());
 
+// set template engine middlewares
+server.set('view engine', 'ejs');
+
 // init express aplication
 const serverPort = 4000;
 server.listen(serverPort, () => {
@@ -66,3 +69,20 @@ server.get('/movies', (req, res) => {
   // send server response in json format
   res.json(response);
 })
+
+
+server.get('/movie/:movieId', (req, res) => {
+
+  console.log('Url params:', req.params);
+
+  const foundMovie = movies.find(movie => movie.id === req.params.movieId);
+  console.log(foundMovie);
+
+  res.render('movie')
+
+}); // de momento no funciona
+
+
+// static server
+const staticServerPathWeb = "./src/public-react"; // En esta carpeta ponemos los ficheros estáticos
+server.use(express.static(staticServerPathWeb));
