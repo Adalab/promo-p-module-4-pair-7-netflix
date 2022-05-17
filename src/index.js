@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const users = require("./data/users.json");
 // movies data
 const movies = require("./data/movies.json");
 
@@ -64,7 +65,21 @@ server.get("/movies", (req, res) => {
   // send server response in json format
   res.json(response);
 });
-
+server.post("/login", (req, res) => {
+  console.log(req.body);
+  const foundUser = users.find(
+    (user) =>
+      (user.email === req.body.email) & (user.password === req.body.password)
+  );
+  if (foundUser) {
+    res.json({ success: true, userId: "id_de_la_usuaria_encontrada" });
+  } else {
+    res.json({
+      success: false,
+      errorMessage: "Usuaria/o no encontrada/o",
+    });
+  }
+});
 server.get("/movie/:movieId", (req, res) => {
   console.log("Url params:", req.params);
 
