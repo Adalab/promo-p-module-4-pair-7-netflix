@@ -1,8 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const users = require("./data/users.json");
+const Database = require("better-sqlite3");
 // movies data
-const movies = require("./data/movies.json");
+//const movies = require("./data/movies.json");
 
 // create and config server
 const server = express();
@@ -17,6 +18,8 @@ const serverPort = 4000;
 server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
 });
+
+const db = new Database("./src/data/database.db", { verbose: console.log });
 
 // api endpoint - quey params movies
 server.get("/movies", (req, res) => {
@@ -44,7 +47,7 @@ server.get("/movies", (req, res) => {
       return 0;
     }
   };
-
+  /*
   // filter and sort movies
   const filteredMovies = movies
     .filter((movie) => {
@@ -55,11 +58,17 @@ server.get("/movies", (req, res) => {
       }
     })
     .sort(sortFilterParam === "asc" ? orderScenesAsc : orderScenesDesc);
+*/
 
+  //NO FUNCIONA TODAVIA
+
+  const query = db.prepare(`SELECT * FROM movies WHERE gender = ?`);
+  const movies = query.all(genderFilterParam);
+  console.log(movies);
   // server response
   const response = {
     success: true,
-    movies: filteredMovies,
+    movies: movies,
   };
 
   // send server response in json format
@@ -94,5 +103,5 @@ server.get("/movie/:movieId", (req, res) => {
 const staticServerPathWeb = "./src/public-react";
 server.use(express.static(staticServerPathWeb));
 // static server of images
-const staticServerImagesPathWeb = "src/public-movies-images/";
+const staticServerImagesPathWeb = "./src/public-movies-images/";
 server.use(express.static(staticServerImagesPathWeb));
