@@ -3,7 +3,7 @@ const cors = require("cors");
 const users = require("./data/users.json");
 const Database = require("better-sqlite3");
 // movies data
-//const movies = require("./data/movies.json");
+const movies = require("./data/movies.json");
 
 // create and config server
 const server = express();
@@ -47,7 +47,7 @@ server.get("/movies", (req, res) => {
       return 0;
     }
   };
-  /*
+
   // filter and sort movies
   const filteredMovies = movies
     .filter((movie) => {
@@ -58,17 +58,16 @@ server.get("/movies", (req, res) => {
       }
     })
     .sort(sortFilterParam === "asc" ? orderScenesAsc : orderScenesDesc);
-*/
 
   //NO FUNCIONA TODAVIA
 
-  const query = db.prepare(`SELECT * FROM movies WHERE gender = ?`);
-  const movies = query.all(genderFilterParam);
-  console.log(movies);
+  /* const query = db.prepare(`SELECT * FROM movies WHERE gender = ?`);
+  const movies = query.get(genderFilterParam);
+  console.log(movies);*/
   // server response
   const response = {
     success: true,
-    movies: movies,
+    movies: filteredMovies,
   };
 
   // send server response in json format
@@ -81,7 +80,7 @@ server.post("/login", (req, res) => {
       (user.email === req.body.email) & (user.password === req.body.password)
   );
   if (foundUser) {
-    res.json({ success: true, userId: "id_de_la_usuaria_encontrada" });
+    res.json({ success: true, userId: req.body.id });
   } else {
     res.json({
       success: false,
@@ -91,12 +90,10 @@ server.post("/login", (req, res) => {
 });
 server.get("/movie/:movieId", (req, res) => {
   console.log("Url params:", req.params);
-
   const foundMovie = movies.find((movie) => movie.id === req.params.movieId);
   console.log(foundMovie);
-
-  res.render("movie");
-}); // de momento no funciona
+  res.render("movie", foundMovie);
+});
 
 // En esta carpeta ponemos los ficheros estáticos
 // static server
