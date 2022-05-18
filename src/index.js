@@ -29,8 +29,35 @@ server.get("/movies", (req, res) => {
   const genderFilterParam = req.query.gender;
   const sortFilterParam = req.query.sort;
 
+
+  /*
+  let moviesData;
+  if (genderFilterParam) {
+    const query = db.prepare(`SELECT * FROM movies WHERE gender = ?`);
+    moviesData = query.all(genderFilterParam.toLowerCase());
+  } else {
+    const query = db.prepare(`SELECT * FROM movies`);
+    moviesData = query.all();
+  }
+  */
+
+
+  /* const query = db.prepare(`SELECT * FROM movies WHERE gender LIKE ?`);
+  const moviesData = query.all(genderFilterParam ? genderFilterParam.toLowerCase() : '%'); */
+
+
+  let moviesData;
+  if (sortFilterParam === "asc") {
+    const query = db.prepare(`SELECT * FROM movies WHERE gender LIKE ? ORDER BY name`);
+    moviesData = query.all(genderFilterParam ? genderFilterParam.toLowerCase() : '%');
+  } else {
+    const query = db.prepare(`SELECT * FROM movies WHERE gender LIKE ? ORDER BY name DESC`);
+    moviesData = query.all(genderFilterParam ? genderFilterParam.toLowerCase() : '%');
+  }
+
+
   // sort movies by title
-  const orderScenesAsc = (x, y) => {
+  /* const orderScenesAsc = (x, y) => {
     if (x.title < y.title) {
       return -1;
     } else if (x.title > y.title) {
@@ -48,17 +75,8 @@ server.get("/movies", (req, res) => {
     } else {
       return 0;
     }
-  };
-  let moviesData;
-  if (genderFilterParam) {
-    const query = db.prepare(`SELECT * FROM movies WHERE gender = ?`);
-    moviesData = query.all(genderFilterParam.toLowerCase());
-  } else {
-    const query = db.prepare(`SELECT * FROM movies`);
-    moviesData = query.all();
-  }
+  }; */
 
-  console.log(moviesData);
   // filter and sort movies
   /*const filteredMovies = moviesData
     .filter((movie) => {
@@ -75,17 +93,19 @@ server.get("/movies", (req, res) => {
   } else {
     moviesData.sort(orderScenesDesc);
   }*/
+
+
   // server response
   const response = {
     success: true,
-    movies: moviesData.sort(
-      sortFilterParam === "asc" ? orderScenesAsc : orderScenesDesc // no funciona el sort aun
-    ),
+    movies: moviesData
   };
 
   // send server response in json format
   res.json(response);
 });
+
+
 server.post("/login", (req, res) => {
   const foundUser = users.find(
     (user) =>
@@ -100,6 +120,8 @@ server.post("/login", (req, res) => {
     });
   }
 });
+
+
 server.get("/movie/:movieId", (req, res) => {
   console.log("Url params:", req.params);
   const foundMovie = movies.find((movie) => movie.id === req.params.movieId);
