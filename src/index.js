@@ -3,7 +3,7 @@ const cors = require("cors");
 const users = require("./data/users.json");
 const Database = require("better-sqlite3");
 // movies data
-const movies = require("./data/movies.json");
+//const movies = require("./data/movies.json");
 
 // create and config server
 const server = express();
@@ -18,6 +18,8 @@ const serverPort = 4000;
 server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
 });
+
+//Le decimos a Node que queremos usar esa base de datos:
 
 const db = new Database("./src/data/database.db", { verbose: console.log });
 
@@ -47,9 +49,18 @@ server.get("/movies", (req, res) => {
       return 0;
     }
   };
+  let moviesData;
+  if (genderFilterParam) {
+    const query = db.prepare(`SELECT * FROM movies WHERE gender = ?`);
+    moviesData = query.all(genderFilterParam.toLowerCase());
+  } else {
+    const query = db.prepare(`SELECT * FROM movies`);
+    moviesData = query.all();
+  }
 
+  console.log(moviesData);
   // filter and sort movies
-  const filteredMovies = movies
+  /*const filteredMovies = moviesData
     .filter((movie) => {
       if (genderFilterParam === "") {
         return true;
@@ -58,23 +69,24 @@ server.get("/movies", (req, res) => {
       }
     })
     .sort(sortFilterParam === "asc" ? orderScenesAsc : orderScenesDesc);
-
-  //NO FUNCIONA TODAVIA
-
-  /* const query = db.prepare(`SELECT * FROM movies WHERE gender = ?`);
-  const movies = query.get(genderFilterParam);
-  console.log(movies);*/
+*/
+  /*if (sortFilterParam === "asc") {
+    moviesData.sort(orderScenesAsc);
+  } else {
+    moviesData.sort(orderScenesDesc);
+  }*/
   // server response
   const response = {
     success: true,
-    movies: filteredMovies,
+    movies: moviesData.sort(
+      sortFilterParam === "asc" ? orderScenesAsc : orderScenesDesc // no funciona el sort aun
+    ),
   };
 
   // send server response in json format
   res.json(response);
 });
 server.post("/login", (req, res) => {
-  console.log(req.body);
   const foundUser = users.find(
     (user) =>
       (user.email === req.body.email) & (user.password === req.body.password)
@@ -97,8 +109,14 @@ server.get("/movie/:movieId", (req, res) => {
 
 // En esta carpeta ponemos los ficheros estáticos
 // static server
+
 const staticServerPathWeb = "./src/public-react";
 server.use(express.static(staticServerPathWeb));
 // static server of images
+
 const staticServerImagesPathWeb = "./src/public-movies-images/";
 server.use(express.static(staticServerImagesPathWeb));
+// static server of styles:
+
+const staticServerStylesPathWeb = "./src/public-styles";
+server.use(express.static(staticServerStylesPathWeb));
