@@ -30,69 +30,8 @@ server.get("/movies", (req, res) => {
   const sortFilterParam = req.query.sort;
 
 
-  /*
-  let moviesData;
-  if (genderFilterParam) {
-    const query = db.prepare(`SELECT * FROM movies WHERE gender = ?`);
-    moviesData = query.all(genderFilterParam.toLowerCase());
-  } else {
-    const query = db.prepare(`SELECT * FROM movies`);
-    moviesData = query.all();
-  }
-  */
-
-
-    /* let moviesData;
-  if (sortFilterParam === "asc") {
-    const query = db.prepare(`SELECT * FROM movies WHERE gender LIKE ? ORDER BY name`);
-    moviesData = query.all(genderFilterParam ? genderFilterParam.toLowerCase() : '%');
-  } else {
-    const query = db.prepare(`SELECT * FROM movies WHERE gender LIKE ? ORDER BY name DESC`);
-    moviesData = query.all(genderFilterParam ? genderFilterParam.toLowerCase() : '%');
-  }; */
-
-
   const query = db.prepare(`SELECT * FROM movies WHERE gender LIKE ? ORDER BY name ${sortFilterParam}`);
   const moviesData = query.all(genderFilterParam ? genderFilterParam.toLowerCase() : '%');
-
-
-  // sort movies by title
-  /* const orderScenesAsc = (x, y) => {
-    if (x.title < y.title) {
-      return -1;
-    } else if (x.title > y.title) {
-      return 1;
-    } else {
-      return 0;
-    }
-  };
-
-  const orderScenesDesc = (x, y) => {
-    if (x.title < y.title) {
-      return 1;
-    } else if (x.title > y.title) {
-      return -1;
-    } else {
-      return 0;
-    }
-  }; */
-
-  // filter and sort movies
-  /*const filteredMovies = moviesData
-    .filter((movie) => {
-      if (genderFilterParam === "") {
-        return true;
-      } else {
-        return movie.gender === genderFilterParam ? true : false;
-      }
-    })
-    .sort(sortFilterParam === "asc" ? orderScenesAsc : orderScenesDesc);
-*/
-  /*if (sortFilterParam === "asc") {
-    moviesData.sort(orderScenesAsc);
-  } else {
-    moviesData.sort(orderScenesDesc);
-  }*/
 
 
   // server response
@@ -107,12 +46,24 @@ server.get("/movies", (req, res) => {
 
 
 server.post("/login", (req, res) => {
-  const foundUser = users.find(
+
+  console.log("Body params:", req.body);
+
+  const query =db.prepare(`SELECT * FROM users WHERE email = ? AND password = ?`);
+  const userLogin = query.get(req.body.email, req.body.password);
+
+  /* const foundUser = users.find(
     (user) =>
       (user.email === req.body.email) & (user.password === req.body.password)
   );
-  if (foundUser) {
-    res.json({ success: true, userId: req.body.id });
+ */
+
+  console.log(userLogin.userId);
+  if (userLogin !== undefined) {
+    res.json({
+      success: true,
+      userId: userLogin.userId 
+    });
   } else {
     res.json({
       success: false,
@@ -128,6 +79,7 @@ server.get("/movie/:movieId", (req, res) => {
   console.log(foundMovie);
   res.render("movie", foundMovie);
 });
+
 
 // En esta carpeta ponemos los ficheros estáticos
 // static server
