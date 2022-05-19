@@ -3,7 +3,7 @@ const cors = require("cors");
 const users = require("./data/users.json");
 const Database = require("better-sqlite3");
 // movies data
-//const movies = require("./data/movies.json");
+const movies = require("./data/movies.json");
 
 // create and config server
 const server = express();
@@ -42,18 +42,18 @@ server.get("/movies", (req, res) => {
   */
 
 
-  /* const query = db.prepare(`SELECT * FROM movies WHERE gender LIKE ?`);
-  const moviesData = query.all(genderFilterParam ? genderFilterParam.toLowerCase() : '%'); */
-
-
-  let moviesData;
+    /* let moviesData;
   if (sortFilterParam === "asc") {
     const query = db.prepare(`SELECT * FROM movies WHERE gender LIKE ? ORDER BY name`);
     moviesData = query.all(genderFilterParam ? genderFilterParam.toLowerCase() : '%');
   } else {
     const query = db.prepare(`SELECT * FROM movies WHERE gender LIKE ? ORDER BY name DESC`);
     moviesData = query.all(genderFilterParam ? genderFilterParam.toLowerCase() : '%');
-  }
+  }; */
+
+
+  const query = db.prepare(`SELECT * FROM movies WHERE gender LIKE ? ORDER BY name ${sortFilterParam}`);
+  const moviesData = query.all(genderFilterParam ? genderFilterParam.toLowerCase() : '%');
 
 
   // sort movies by title
