@@ -22,6 +22,7 @@ server.listen(serverPort, () => {
 //Le decimos a Node que queremos usar esa base de datos:
 const db = new Database("./src/data/database.db", { verbose: console.log });
 
+
 // api endpoint - quey params movies
 server.get("/movies", (req, res) => {
   // query params
@@ -29,7 +30,7 @@ server.get("/movies", (req, res) => {
   const sortFilterParam = req.query.sort;
 
   const query = db.prepare(
-    `SELECT * FROM movies WHERE gender LIKE ? ORDER BY name ${sortFilterParam}`
+    `SELECT * FROM movies WHERE gender LIKE ? ORDER BY title ${sortFilterParam}`
   );
   const moviesData = query.all(
     genderFilterParam ? genderFilterParam.toLowerCase() : "%"
@@ -44,6 +45,7 @@ server.get("/movies", (req, res) => {
   // send server response in json format
   res.json(response);
 });
+
 
 server.post("/login", (req, res) => {
   const query = db.prepare(
@@ -66,11 +68,14 @@ server.post("/login", (req, res) => {
 });
 
 server.get("/movie/:movieId", (req, res) => {
-  console.log("Url params:", req.params);
-  const foundMovie = movies.find((movie) => movie.id === req.params.movieId);
-  console.log(foundMovie);
-  res.render("movie", foundMovie);
+  const movieId = req.params.movieId;
+
+  const query = db.prepare(`SELECT * FROM movies WHERE id = ?`);
+  const selectedMovie = query.get(movieId);
+
+  res.render("movie", selectedMovie);
 });
+
 
 // Registro de nuevas usuarias en el back
 server.post("/sign-up", (req, res) => {
@@ -101,8 +106,8 @@ server.post("/sign-up", (req, res) => {
   }
 });
 
-// endpoint de actualizar el perfil de la usuaria:
 
+// endpoint de actualizar el perfil de la usuaria:
 server.post("/user/profile", (req, res) => {
   const query = db.prepare(
     `UPDATE users SET name = ?, email = ?, password= ? WHERE userId=?`
@@ -120,6 +125,7 @@ server.post("/user/profile", (req, res) => {
   });
 });
 
+
 //endpoint de recuperar los datos del perfil de la usuaria:
 server.get("/user/profile", (req, res) => {
   console.log("headers params:", req.headers["user-id"]);
@@ -129,17 +135,38 @@ server.get("/user/profile", (req, res) => {
   console.log(userDataProfile);
 });
 
+
 //endpoint para recuperar las peliculas de la usuaria:
 server.get("/user/movies", (req, res) => {
+  const userId = req.headers["user-id"];
+
   const userMovies = db.prepare(
     `SELECT movieId FROM rel_movies_users WHERE userId = ?`
   );
-  const movieIds = userMovies.all(req.headers["user-id"]);
-  console.log(movieIds);
+  const movieIds = userMovies.all(userId);
+
+
+  const moviesIdsQuestions = movieIds.map((id) => "?").join(", "); // que nos devuelve '?, ?'
+
+  // preparamos la segunda query para obtener todos los datos de las películas
+  const moviesQuery = db.prepare(
+    `SELECT * FROM movies WHERE id IN (${moviesIdsQuestions})`
+  );
+
+  // convertimos el array de objetos de id anterior a un array de números
+  const moviesIdsNumbers = movieIds.map((movie) => movie.movieId); // que nos devuelve [1.0, 2.0]
+
+  // ejecutamos segunda la query
+  const movies = moviesQuery.all(moviesIdsNumbers);
+
+  // respondemos a la petición con
   res.json({
-    movieIds: movieIds,
+    success: true,
+    movies: movies,
   });
 });
+
+
 // En esta carpeta ponemos los ficheros estáticos
 // static server
 
