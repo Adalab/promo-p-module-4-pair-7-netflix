@@ -22,37 +22,40 @@ server.listen(serverPort, () => {
 //Le decimos a Node que queremos usar esa base de datos:
 const db = new Database("./src/data/database.db", { verbose: console.log });
 
-
 // api endpoint - quey params movies
 server.get("/movies", (req, res) => {
   // query params
   const genderFilterParam = req.query.gender;
   const sortFilterParam = req.query.sort;
 
-  const query = db.prepare(`SELECT * FROM movies WHERE gender LIKE ? ORDER BY name ${sortFilterParam}`);
-  const moviesData = query.all(genderFilterParam ? genderFilterParam.toLowerCase() : '%');
+  const query = db.prepare(
+    `SELECT * FROM movies WHERE gender LIKE ? ORDER BY name ${sortFilterParam}`
+  );
+  const moviesData = query.all(
+    genderFilterParam ? genderFilterParam.toLowerCase() : "%"
+  );
 
   // server response
   const response = {
     success: true,
-    movies: moviesData
+    movies: moviesData,
   };
 
   // send server response in json format
   res.json(response);
 });
 
-
 server.post("/login", (req, res) => {
-
-  const query =db.prepare(`SELECT * FROM users WHERE email = ? AND password = ?`);
+  const query = db.prepare(
+    `SELECT * FROM users WHERE email = ? AND password = ?`
+  );
   const userLogin = query.get(req.body.email, req.body.password);
 
   console.log(userLogin.userId);
   if (userLogin !== undefined) {
     res.json({
       success: true,
-      userId: userLogin.userId 
+      userId: userLogin.userId,
     });
   } else {
     res.json({
@@ -62,7 +65,6 @@ server.post("/login", (req, res) => {
   }
 });
 
-
 server.get("/movie/:movieId", (req, res) => {
   console.log("Url params:", req.params);
   const foundMovie = movies.find((movie) => movie.id === req.params.movieId);
@@ -70,38 +72,53 @@ server.get("/movie/:movieId", (req, res) => {
   res.render("movie", foundMovie);
 });
 
-
 // Registro de nuevas usuarias en el back
 server.post("/sign-up", (req, res) => {
-
   // body params
   const emailSignUpParam = req.body.email;
   const passwordSignUpParam = req.body.password;
 
-  const userSignUpInsert =db.prepare(`SELECT * FROM users WHERE email = ? AND password = ?`);
+  const userSignUpInsert = db.prepare(
+    `SELECT * FROM users WHERE email = ? AND password = ?`
+  );
   const foundUser = userSignUpInsert.get(emailSignUpParam, passwordSignUpParam);
 
   if (foundUser === undefined) {
-
-    const query = db.prepare('INSERT INTO users (email, password) VALUES (?, ?)');
+    const query = db.prepare(
+      "INSERT INTO users (email, password) VALUES (?, ?)"
+    );
     const userSignUp = query.run(emailSignUpParam, passwordSignUpParam);
 
     res.json({
       success: true,
-      userId: userSignUp.lastInsertRowid
+      userId: userSignUp.lastInsertRowid,
     });
-
   } else {
-
     res.json({
       success: false,
       errorMessage: "Usuaria/o ya existente",
     });
-
   }
 });
 
+// endpoint del perfil de la usuaria:
 
+server.post("/user/profile", (req, res) => {
+  const query = db.prepare(
+    `UPDATE users SET name = ?, email = ?, password= ? WHERE userId=?`
+  );
+
+  const updateProfile = query.run(
+    req.body.name,
+    req.body.email,
+    req.body.password,
+    req.headers["user-id"]
+  );
+  res.json({
+    succes: true,
+    userProfile: updateProfile,
+  });
+});
 // En esta carpeta ponemos los ficheros estáticos
 // static server
 
