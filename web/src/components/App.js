@@ -145,6 +145,7 @@ const App = () => {
   const logout = () => {
     router.redirect("/");
     router.reload();
+    setUserId('');
   };
 
   /*
