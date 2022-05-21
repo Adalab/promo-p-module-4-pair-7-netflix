@@ -134,12 +134,28 @@ server.get("/user/movies", (req, res) => {
   const userMovies = db.prepare(
     `SELECT movieId FROM rel_movies_users WHERE userId = ?`
   );
-  const movieIds = userMovies.all(req.headers["user-id"]);
-  console.log(movieIds);
+  const userId = req.headers["user-id"];
+  const movieIds = userMovies.all(userId);
+  const moviesIdsQuestions = movieIds.map((id) => "?").join(", "); // que nos devuelve '?, ?'
+
+  // preparamos la segunda query para obtener todos los datos de las películas
+  const moviesQuery = db.prepare(
+    `SELECT * FROM movies WHERE id IN (${moviesIdsQuestions})`
+  );
+
+  // convertimos el array de objetos de id anterior a un array de números
+  const moviesIdsNumbers = movieIds.map((movie) => movie.movieId); // que nos devuelve [1.0, 2.0]
+
+  // ejecutamos segunda la query
+  const movies = moviesQuery.all(moviesIdsNumbers);
+
+  // respondemos a la petición con
   res.json({
-    movieIds: movieIds,
+    success: true,
+    movies: movies,
   });
 });
+
 // En esta carpeta ponemos los ficheros estáticos
 // static server
 
