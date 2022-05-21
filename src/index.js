@@ -29,13 +29,17 @@ server.get("/movies", (req, res) => {
   const genderFilterParam = req.query.gender;
   const sortFilterParam = req.query.sort;
 
-  const query = db.prepare(`SELECT * FROM movies WHERE gender LIKE ? ORDER BY name ${sortFilterParam}`);
-  const moviesData = query.all(genderFilterParam ? genderFilterParam.toLowerCase() : '%');
+  const query = db.prepare(
+    `SELECT * FROM movies WHERE gender LIKE ? ORDER BY title ${sortFilterParam}`
+  );
+  const moviesData = query.all(
+    genderFilterParam ? genderFilterParam.toLowerCase() : "%"
+  );
 
   // server response
   const response = {
     success: true,
-    movies: moviesData
+    movies: moviesData,
   };
 
   // send server response in json format
@@ -44,15 +48,16 @@ server.get("/movies", (req, res) => {
 
 
 server.post("/login", (req, res) => {
-
-  const query =db.prepare(`SELECT * FROM users WHERE email = ? AND password = ?`);
+  const query = db.prepare(
+    `SELECT * FROM users WHERE email = ? AND password = ?`
+  );
   const userLogin = query.get(req.body.email, req.body.password);
 
   console.log(userLogin.userId);
   if (userLogin !== undefined) {
     res.json({
       success: true,
-      userId: userLogin.userId 
+      userId: userLogin.userId,
     });
   } else {
     res.json({
@@ -62,43 +67,103 @@ server.post("/login", (req, res) => {
   }
 });
 
-
 server.get("/movie/:movieId", (req, res) => {
-  console.log("Url params:", req.params);
-  const foundMovie = movies.find((movie) => movie.id === req.params.movieId);
-  console.log(foundMovie);
-  res.render("movie", foundMovie);
+  const movieId = req.params.movieId;
+
+  const query = db.prepare(`SELECT * FROM movies WHERE id = ?`);
+  const selectedMovie = query.get(movieId);
+
+  res.render("movie", selectedMovie);
 });
 
 
 // Registro de nuevas usuarias en el back
 server.post("/sign-up", (req, res) => {
-
   // body params
   const emailSignUpParam = req.body.email;
   const passwordSignUpParam = req.body.password;
 
-  const userSignUpInsert =db.prepare(`SELECT * FROM users WHERE email = ? AND password = ?`);
+  const userSignUpInsert = db.prepare(
+    `SELECT * FROM users WHERE email = ? AND password = ?`
+  );
   const foundUser = userSignUpInsert.get(emailSignUpParam, passwordSignUpParam);
 
   if (foundUser === undefined) {
-
-    const query = db.prepare('INSERT INTO users (email, password) VALUES (?, ?)');
+    const query = db.prepare(
+      "INSERT INTO users (email, password) VALUES (?, ?)"
+    );
     const userSignUp = query.run(emailSignUpParam, passwordSignUpParam);
 
     res.json({
       success: true,
-      userId: userSignUp.lastInsertRowid
+      userId: userSignUp.lastInsertRowid,
     });
-
   } else {
-
     res.json({
       success: false,
       errorMessage: "Usuaria/o ya existente",
     });
-
   }
+});
+
+
+// endpoint de actualizar el perfil de la usuaria:
+server.post("/user/profile", (req, res) => {
+  const query = db.prepare(
+    `UPDATE users SET name = ?, email = ?, password= ? WHERE userId=?`
+  );
+
+  const updateProfile = query.run(
+    req.body.name,
+    req.body.email,
+    req.body.password,
+    req.headers["user-id"]
+  );
+  res.json({
+    succes: true,
+    userProfile: updateProfile,
+  });
+});
+
+
+//endpoint de recuperar los datos del perfil de la usuaria:
+server.get("/user/profile", (req, res) => {
+  console.log("headers params:", req.headers["user-id"]);
+  const userProfile = db.prepare(`SELECT * FROM users WHERE userId = ?`);
+  const userDataProfile = userProfile.get(req.headers["user-id"]);
+  res.json(userDataProfile);
+  console.log(userDataProfile);
+});
+
+
+//endpoint para recuperar las peliculas de la usuaria:
+server.get("/user/movies", (req, res) => {
+  const userId = req.headers["user-id"];
+
+  const userMovies = db.prepare(
+    `SELECT movieId FROM rel_movies_users WHERE userId = ?`
+  );
+  const movieIds = userMovies.all(userId);
+
+
+  const moviesIdsQuestions = movieIds.map((id) => "?").join(", "); // que nos devuelve '?, ?'
+
+  // preparamos la segunda query para obtener todos los datos de las películas
+  const moviesQuery = db.prepare(
+    `SELECT * FROM movies WHERE id IN (${moviesIdsQuestions})`
+  );
+
+  // convertimos el array de objetos de id anterior a un array de números
+  const moviesIdsNumbers = movieIds.map((movie) => movie.movieId); // que nos devuelve [1.0, 2.0]
+
+  // ejecutamos segunda la query
+  const movies = moviesQuery.all(moviesIdsNumbers);
+
+  // respondemos a la petición con
+  res.json({
+    success: true,
+    movies: movies,
+  });
 });
 
 
