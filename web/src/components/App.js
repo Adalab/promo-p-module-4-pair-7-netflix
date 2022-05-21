@@ -145,6 +145,7 @@ const App = () => {
   const logout = () => {
     router.redirect("/");
     router.reload();
+    // he añadido esta sentencia para deslogear a la usuaria cuando pulsa el botón de 'Cerrar sesión'
     setUserId('');
   };
 
