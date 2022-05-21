@@ -124,9 +124,21 @@ server.post("/user/profile", (req, res) => {
 server.get("/user/profile", (req, res) => {
   console.log("headers params:", req.headers["user-id"]);
   const userProfile = db.prepare(`SELECT * FROM users WHERE userId = ?`);
-  const userDates = userProfile.get(req.headers["user-id"]);
-  res.json(userDates);
-  console.log(userDates);
+  const userDataProfile = userProfile.get(req.headers["user-id"]);
+  res.json(userDataProfile);
+  console.log(userDataProfile);
+});
+
+//endpoint para recuperar las peliculas de la usuaria:
+server.get("/user/movies", (req, res) => {
+  const userMovies = db.prepare(
+    `SELECT movieId FROM rel_movies_users WHERE userId = ?`
+  );
+  const movieIds = userMovies.all(req.headers["user-id"]);
+  console.log(movieIds);
+  res.json({
+    movieIds: movieIds,
+  });
 });
 // En esta carpeta ponemos los ficheros estáticos
 // static server
