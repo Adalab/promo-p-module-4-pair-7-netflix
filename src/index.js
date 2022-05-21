@@ -101,7 +101,7 @@ server.post("/sign-up", (req, res) => {
   }
 });
 
-// endpoint del perfil de la usuaria:
+// endpoint de actualizar el perfil de la usuaria:
 
 server.post("/user/profile", (req, res) => {
   const query = db.prepare(
@@ -118,6 +118,15 @@ server.post("/user/profile", (req, res) => {
     succes: true,
     userProfile: updateProfile,
   });
+});
+
+//endpoint de recuperar los datos del perfil de la usuaria:
+server.get("/user/profile", (req, res) => {
+  console.log("headers params:", req.headers["user-id"]);
+  const userProfile = db.prepare(`SELECT * FROM users WHERE userId = ?`);
+  const userDates = userProfile.get(req.headers["user-id"]);
+  res.json(userDates);
+  console.log(userDates);
 });
 // En esta carpeta ponemos los ficheros estáticos
 // static server
