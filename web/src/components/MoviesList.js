@@ -9,9 +9,9 @@ const MoviesList = props => {
     return props.movies.map(movie => {
       return (
         <li key={movie.id} className="card">
+          <img src="//localhost:4000/Logo_netflix.png" alt="Logo Netflix" className="card__logo" />
           <img className="card__img" src={movie.image} alt={`Carátula de ${movie.title}`} />
-          <h3 className="card__title">{movie.title}</h3>
-          <p className="card__description">Género: {movie.gender}</p>
+          <h3 className="card__title uppercase">{movie.title}</h3>
         </li>
       );
     });

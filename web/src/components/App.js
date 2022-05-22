@@ -12,6 +12,9 @@ import apiMovies from "../services/api-movies";
 import apiUser from "../services/api-user";
 import router from "../services/router";
 import ls from "../services/local-storage";
+// styles
+import '../stylesheets/App.scss';
+
 
 const App = () => {
   // state: user

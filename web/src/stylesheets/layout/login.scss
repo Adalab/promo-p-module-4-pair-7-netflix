@@ -1,0 +1,47 @@
+.formLogin{
+  margin: 20px 0;
+
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__label {
+    margin-bottom: 10px;
+
+    @media (min-width: 900px) {
+      margin-bottom: 12px;
+
+      font-size: 18px;
+    }
+  }
+
+  &__input {
+    background: transparent;
+    border: 2px solid $colorWhite;
+    border-radius: 10px;
+
+/*     width: 190px; */
+
+    margin-bottom: 18px;
+    padding: 5px 15px;
+
+    color: $colorWhite;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+
+    @media (min-width: 900px) {
+     /*  width: 500px; */
+
+      margin-bottom: 30px;
+
+      font-size: 16px;
+    }
+  }
+
+  &__input:active {
+    box-shadow: 2px 2px 15px $colorNetflix inset;
+  }
+}

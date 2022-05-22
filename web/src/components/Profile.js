@@ -33,14 +33,14 @@ const Profile = (props) => {
   // render
 
   return (
-    <section className="border--medium">
-      <h1>Mi perfil</h1>
-      <form onSubmit={handleForm}>
-        <label className="form__label display-block" htmlFor="name">
+    <section>
+      <h1 className="title">Mi perfil</h1>
+      <form className="formLogin" onSubmit={handleForm}>
+        <label className="formLogin__label" htmlFor="name">
           Mi nombre
         </label>
         <input
-          className="form__input-text"
+          className="formLogin__input"
           type="text"
           name="name"
           id="name"
@@ -48,11 +48,11 @@ const Profile = (props) => {
           onChange={handleName}
         />
 
-        <label className="form__label display-block" htmlFor="email">
+        <label className="formLogin__label" htmlFor="email">
           Mi email
         </label>
         <input
-          className="form__input-text"
+          className="formLogin__input"
           type="text"
           name="email"
           id="email"
@@ -60,11 +60,11 @@ const Profile = (props) => {
           onChange={handleEmail}
         />
 
-        <label className="form__label display-block" htmlFor="password">
+        <label className="formLogin__label" htmlFor="password">
           Mi contraseña
         </label>
         <input
-          className="form__input-text"
+          className="formLogin__input"
           type="text"
           name="password"
           id="password"
@@ -73,7 +73,7 @@ const Profile = (props) => {
         />
 
         <input
-          className="form__btn display-block"
+          className="button"
           type="submit"
           value="Guardar"
         />

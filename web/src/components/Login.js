@@ -29,22 +29,22 @@ const Login = props => {
     // Si el API ha devuelto un error, App lo guarda en su estado y nos lo pasa por props
     if (props.loginErrorMessage !== '') {
       return (
-        <p className="border--medium border--warning mt-1">
-          Error en el login: <span className="text--bold">{props.loginErrorMessage}</span>
+        <p className="errorMessage">
+          Error en el login: <span className="error">{props.loginErrorMessage}</span>
         </p>
       );
     }
   };
 
   return (
-    <section className="border--medium">
-      <h1>Identifícate</h1>
-      <form onSubmit={handleForm}>
-        <label className="form__label display-block" htmlFor="email">
+    <section className="login">
+      <h1 className="title">Identifícate</h1>
+      <form className="formLogin" onSubmit={handleForm}>
+        <label className="formLogin__label" htmlFor="email">
           Escribe tu email
         </label>
         <input
-          className="form__input-text"
+          className="formLogin__input"
           type="text"
           name="email"
           id="email"
@@ -52,11 +52,11 @@ const Login = props => {
           onChange={handleEmail}
         />
 
-        <label className="form__label display-block" htmlFor="password">
+        <label className="formLogin__label" htmlFor="password">
           Escribe tu contraseña
         </label>
         <input
-          className="form__input-text"
+          className="formLogin__input"
           type="text"
           name="password"
           id="password"
@@ -64,7 +64,7 @@ const Login = props => {
           onChange={handlePassword}
         />
 
-        <input className="form__btn display-block" type="submit" value="Entrar" />
+        <input className="button" type="submit" value="Entrar" />
 
         {renderErrorMessage()}
       </form>

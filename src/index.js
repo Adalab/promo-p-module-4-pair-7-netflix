@@ -1,9 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-// const users = require("./data/users.json");
 const Database = require("better-sqlite3");
-// movies data
-// const movies = require("./data/movies.json");
 
 // create and config server
 const server = express();
@@ -53,7 +50,6 @@ server.post("/login", (req, res) => {
   );
   const userLogin = query.get(req.body.email, req.body.password);
 
-  console.log(userLogin.userId);
   if (userLogin !== undefined) {
     res.json({
       success: true,
