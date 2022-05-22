@@ -7,7 +7,7 @@
   .card {
     width: 92px;
     height: 135px;
-
+    position: relative;
     margin: 4px;
 
     @media (min-width: 900px) {
@@ -24,6 +24,18 @@
       position: relative;
       top: 30px;
       left: 8px;
+    }
+
+    &__fav {
+      position: absolute;
+      top: 30px;
+      right: 10px;
+      cursor: pointer;
+      color:red;
+      &:hover {
+        color: gold;
+        transform: scale(1.1);
+      }
     }
 
 

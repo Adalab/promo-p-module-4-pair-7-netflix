@@ -93,13 +93,31 @@ const getUserMoviesFromApi = (userId) => {
       return data;
     });
 };
-
+const setMovieFavourite = (userId, movieId) => {
+  const data = {
+    movieId: movieId.toString(),
+  };
+  return fetch("http://localhost:4000/user/movies/favourite", {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json",
+      "user-id": userId,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      return data;
+    });
+};
 const objToExport = {
   sendLoginToApi: sendLoginToApi,
   sendSingUpToApi: sendSingUpToApi,
   sendProfileToApi: sendProfileToApi,
   getProfileFromApi: getProfileFromApi,
   getUserMoviesFromApi: getUserMoviesFromApi,
+  setMovieFavourite: setMovieFavourite,
 };
 
 export default objToExport;
