@@ -6,12 +6,12 @@ const Header = props => {
     if (props.isUserLogged === false)
       return (
         <>
-          <li className="nav__item">
+          <li>
             <Link className="nav__link" to="/login">
               Login
             </Link>
           </li>
-          <li className="nav__item">
+          <li>
             <Link className="nav__link" to="/signup">
               Registro
             </Link>
@@ -24,18 +24,18 @@ const Header = props => {
     if (props.isUserLogged === true)
       return (
         <>
-          <li className="nav__item">
-            <Link className="nav__link" to="/profile">
+          <li>
+            <Link to="/profile">
               Mi perfil
             </Link>
           </li>
-          <li className="nav__item">
-            <Link className="nav__link" to="/my-movies">
+          <li>
+            <Link to="/my-movies">
               Mis películas
             </Link>
           </li>
-          <li className="nav__item">
-            <span className="nav__link" onClick={props.logout}>
+          <li className="close">
+            <span onClick={props.logout}>
               Cerrar sesión
             </span>
           </li>
@@ -44,12 +44,12 @@ const Header = props => {
   };
 
   return (
-    <header className="col2 border--medium">
+    <header className="col2 border--medium header">
       <Link className="nav__link" to="/">
-        <h1 className="title--big">Netflix</h1>
+        <img src="//localhost:4000/fullLogo_netflix.png" alt="Logo Netflix" className="header__title" />
       </Link>
-      <nav className="text-align-right">
-        <ul>
+      <nav >
+        <ul className="header__menu">
           <li className="nav__item">
             <Link className="nav__link" to="/">
               Inicio

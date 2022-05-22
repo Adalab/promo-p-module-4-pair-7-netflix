@@ -12,6 +12,8 @@ import apiMovies from "../services/api-movies";
 import apiUser from "../services/api-user";
 import router from "../services/router";
 import ls from "../services/local-storage";
+// styles
+import "../stylesheets/App.scss";
 
 const App = () => {
   // state: user
@@ -146,7 +148,7 @@ const App = () => {
     router.redirect("/");
     router.reload();
     // he añadido esta sentencia para deslogear a la usuaria cuando pulsa el botón de 'Cerrar sesión'
-    setUserId('');
+    setUserId("");
   };
 
   /*

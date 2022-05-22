@@ -1,9 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-// const users = require("./data/users.json");
 const Database = require("better-sqlite3");
-// movies data
-// const movies = require("./data/movies.json");
 
 // create and config server
 const server = express();
@@ -21,7 +18,6 @@ server.listen(serverPort, () => {
 
 //Le decimos a Node que queremos usar esa base de datos:
 const db = new Database("./src/data/database.db", { verbose: console.log });
-
 
 // api endpoint - quey params movies
 server.get("/movies", (req, res) => {
@@ -46,14 +42,12 @@ server.get("/movies", (req, res) => {
   res.json(response);
 });
 
-
 server.post("/login", (req, res) => {
   const query = db.prepare(
     `SELECT * FROM users WHERE email = ? AND password = ?`
   );
   const userLogin = query.get(req.body.email, req.body.password);
 
-  console.log(userLogin.userId);
   if (userLogin !== undefined) {
     res.json({
       success: true,
@@ -75,7 +69,6 @@ server.get("/movie/:movieId", (req, res) => {
 
   res.render("movie", selectedMovie);
 });
-
 
 // Registro de nuevas usuarias en el back
 server.post("/sign-up", (req, res) => {
@@ -106,7 +99,6 @@ server.post("/sign-up", (req, res) => {
   }
 });
 
-
 // endpoint de actualizar el perfil de la usuaria:
 server.post("/user/profile", (req, res) => {
   const query = db.prepare(
@@ -125,7 +117,6 @@ server.post("/user/profile", (req, res) => {
   });
 });
 
-
 //endpoint de recuperar los datos del perfil de la usuaria:
 server.get("/user/profile", (req, res) => {
   console.log("headers params:", req.headers["user-id"]);
@@ -135,7 +126,6 @@ server.get("/user/profile", (req, res) => {
   console.log(userDataProfile);
 });
 
-
 //endpoint para recuperar las peliculas de la usuaria:
 server.get("/user/movies", (req, res) => {
   const userId = req.headers["user-id"];
@@ -144,7 +134,6 @@ server.get("/user/movies", (req, res) => {
     `SELECT movieId FROM rel_movies_users WHERE userId = ?`
   );
   const movieIds = userMovies.all(userId);
-
 
   const moviesIdsQuestions = movieIds.map((id) => "?").join(", "); // que nos devuelve '?, ?'
 
@@ -165,7 +154,35 @@ server.get("/user/movies", (req, res) => {
     movies: movies,
   });
 });
+//Favoritas:
+server.post("/user/movies/favourite", (req, res) => {
+  const userId = req.headers["user-id"];
+  const movieId = req.body.movieId;
+  console.log(req.body.movieId);
+  const userFavourites = db.prepare(
+    `SELECT * FROM rel_movies_users WHERE userId = ? AND movieId = ?`
+  );
+  const userDataFavourites = userFavourites.get(userId, movieId);
+  console.log(userDataFavourites);
+  if (userDataFavourites === undefined) {
+    const addMovieFav = db.prepare(
+      "INSERT INTO rel_movies_users (userId, movieId) VALUES (?, ?)"
+    );
+    const userFav = addMovieFav.run(userId, movieId);
 
+    res.json({
+      userFav: userFav,
+    });
+  } else {
+    const deleteFav = db.prepare(
+      "DELETE FROM rel_movies_users WHERE userId = ? and movieId = ?"
+    );
+    const notFav = deleteFav.run(userId, movieId);
+    res.json({
+      notFav: notFav,
+    });
+  }
+});
 
 // En esta carpeta ponemos los ficheros estáticos
 // static server

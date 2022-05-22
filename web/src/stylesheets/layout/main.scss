@@ -1,0 +1,14 @@
+.main {
+  margin: 0 25px 20px;
+}
+
+
+.title {
+  font-size: 22px;
+  font-weight: 900;
+  text-align: center;
+
+  @media (min-width: 900px) {
+    font-size: 30px;
+  }
+}

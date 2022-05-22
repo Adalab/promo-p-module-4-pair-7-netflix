@@ -1,6 +1,5 @@
 import React from 'react';
 import MoviesList from './MoviesList';
-import '../stylesheets/AppMovies.scss';
 
 const AllMovies = props => {
   const handleOptions = ev => {
@@ -11,29 +10,30 @@ const AllMovies = props => {
   };
 
   return (
-    <section className="border--medium">
-      <h1 className="title--medium">Estas son todas las películas de nuestro catálogo</h1>
-      <form className="movies__filters">
-        <div className="movies__filters--gender">
+    <section className="main">
+      <h1 className="title">Estas son todas las películas de nuestro catálogo</h1>
+      <form className="form">
+        <div className="form__filterGender">
           <label htmlFor="filterGender">Filtrar por género</label>
           <select
-            className="form__input-text"
+            className="select"
             id="filterGender"
             name="gender"
             value={props.allMoviesOptionGender}
             onChange={handleOptions}
           >
-            <option value="">Todas</option>
-            <option value="Drama">Drama</option>
-            <option value="Comedia">Comedia</option>
+            <option className="select__option" value="">Todas</option>
+            <option className="select__option" value="Drama">Drama</option>
+            <option className="select__option" value="Comedia">Comedia</option>
           </select>
         </div>
 
-        <div className="movies__filters--sort">
-          <label>
-            Ordernar: A-Z
+        <div className="form__sort">
+          <label>Ordernar:</label>
+          <label className="labelMovies">
+            A-Z
             <input
-              className="movies__radio"
+              className="radio"
               type="radio"
               name="sort"
               value="asc"
@@ -42,10 +42,10 @@ const AllMovies = props => {
             />
           </label>
 
-          <label>
+          <label className="labelMovies">
             Z-A
             <input
-              className="movies__radio"
+              className="radio"
               type="radio"
               name="sort"
               value="desc"
