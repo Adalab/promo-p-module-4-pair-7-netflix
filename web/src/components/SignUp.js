@@ -6,10 +6,6 @@ const SignUp = props => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordErrorMessage, setPasswordErrorMessage] = useState(false);
 
-/*   const regExpPassword = /^[0-9][A-Z][a-z]?.{8,}$/;
-  const correctPassword = regExpPassword.test(password);
-  console.log(correctPassword); */
-
   // events
 
   const handleEmail = ev => {
